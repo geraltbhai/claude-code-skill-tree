@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claude Code Skill Tree · lean context, fast loops, agent leverage</title>
+<meta name="description" content="Ten Claude Code skills in three tiers that build on each other: cut context waste, tighten the edit-test loop, then run agents well. The first tier is free and MIT.">
+<meta property="og:title" content="Claude Code Skill Tree">
+<meta property="og:description" content="Ten skills in three tiers. Start with lean context (free), unlock fast loops and agent leverage.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://geraltbhai.github.io/claude-code-skill-tree/">
+<meta property="og:image" content="https://geraltbhai.github.io/claude-code-skill-tree/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://geraltbhai.github.io/claude-code-skill-tree/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%230b0d12'/%3E%3Cpath d='M24 6 39 15v18L24 42 9 33V15z' fill='none' stroke='%237ee0a1' stroke-width='4'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b0d12;--panel:#12151d;--line:#232836;--ink:#e7eaf2;--dim:#8b92a8;--free:#7ee0a1;--pro:#f2b84b;--cap:#c38bff;--mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;--sans:"Inter","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1a1f33 0,var(--bg) 55%);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--free)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font:14px var(--mono)}
+header b{letter-spacing:.04em}
+header nav a{color:var(--dim);text-decoration:none;margin-left:20px}
+header nav a:hover{color:var(--ink)}
+.hero{padding:30px 0 6px;max-width:760px}
+.kicker{font:600 13px var(--mono);color:var(--free);letter-spacing:.08em;text-transform:uppercase}
+h1{font:800 clamp(34px,5.6vw,56px)/1.05 var(--sans);letter-spacing:-.025em;margin:10px 0 14px}
+h1 span{background:linear-gradient(90deg,var(--free),var(--pro) 60%,var(--cap));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:#b7bdd0;font-size:18.5px;margin:0 0 22px;max-width:62ch}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font:700 15px var(--sans);padding:12px 20px;border-radius:10px;border:1px solid var(--line);color:var(--ink);background:var(--panel)}
+.btn.free{background:var(--free);border-color:var(--free);color:#08130c}
+.btn:hover{filter:brightness(1.08)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;margin:38px 0 10px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:1fr}}
+.tree{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--line);border-radius:18px;padding:18px 10px 10px}
+.tree svg{display:block;width:100%;height:auto}
+.tierlabel{font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.node{cursor:pointer;outline:none}
+.node .hex{transition:filter .15s, transform .15s;transform-box:fill-box;transform-origin:center}
+.node:hover .hex,.node:focus-visible .hex,.node.sel .hex{filter:brightness(1.35) drop-shadow(0 0 10px currentColor)}
+.node text{pointer-events:none}
+.edge{stroke:#2b3245;stroke-width:3;fill:none}
+.edge.lit{stroke:url(#litgrad);stroke-width:3.5}
+.panel{position:sticky;top:18px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.badge{display:inline-block;font:700 11px var(--mono);letter-spacing:.08em;padding:3px 9px;border-radius:999px;text-transform:uppercase}
+.badge.free{background:rgba(126,224,161,.13);color:var(--free)}
+.badge.pro{background:rgba(242,184,75,.14);color:var(--pro)}
+.badge.cap{background:rgba(195,139,255,.14);color:var(--cap)}
+.panel h2{font:800 24px/1.15 var(--sans);margin:12px 0 4px}
+.panel .tier{font:13px var(--mono);color:var(--dim)}
+.panel p{color:#c3c8d8;margin:12px 0}
+.panel ul{padding-left:18px;margin:10px 0 16px;color:#c3c8d8}
+.panel li{margin:5px 0}
+.panel pre{font:12.5px/1.5 var(--mono);background:#0a0c11;border:1px solid var(--line);border-radius:9px;padding:11px 12px;overflow-x:auto;color:#cfe;white-space:pre-wrap;word-break:break-all}
+.panel .req{font-size:13.5px;color:var(--dim)}
+section{padding:58px 0 0}
+h3{font:800 26px/1.2 var(--sans);letter-spacing:-.015em;margin:0 0 10px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card h4{margin:0 0 6px;font:700 16px var(--sans)}
+.card p{margin:0;color:var(--dim);font-size:14.5px}
+.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:760px}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.plan.hot{border-color:var(--pro)}
+.plan h4{margin:0;font:600 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.plan .amt{font:800 40px/1 var(--sans);margin:12px 0 4px}
+.plan .amt small{font:500 14px var(--sans);color:var(--dim)}
+.plan ul{list-style:none;padding:0;margin:14px 0 20px;color:#c3c8d8;font-size:14.5px}
+.plan li{padding:3px 0 3px 18px;position:relative}
+.plan li:before{content:"+";position:absolute;left:0;color:var(--free);font-family:var(--mono)}
+.fine{color:var(--dim);font-size:13.5px;max-width:72ch}
+footer{margin-top:70px;padding:24px 0 44px;border-top:1px solid var(--line);font:13px var(--mono);color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><b>SKILL TREE</b><nav><a href="#how">How it works</a><a href="#unlock">Unlock</a><a href="https://github.com/geraltbhai/claude-code-skill-tree">GitHub</a></nav></header>
+
+<div class="hero">
+  <div class="kicker">For Claude Code · checked against the docs, Nov 2026</div>
+  <h1>Level up Claude Code<br><span>one skill at a time.</span></h1>
+  <p class="lede">Ten skills in three tiers that build on each other. First stop paying for context nobody needs, then tighten the edit-test loop, then run agents without burning tokens. Tier I is free and MIT.</p>
+  <div class="ctas">
+    <a class="btn free" href="https://github.com/geraltbhai/claude-code-skill-tree">Get Tier I free</a>
+    <a class="btn" href="#unlock">Unlock the full tree</a>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="tree" aria-label="Skill tree">
+    <svg id="tree" viewBox="0 0 720 760" role="group" aria-label="Skill tree with three tiers and a capstone"></svg>
+  </div>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</div>
+
+<section id="how">
+  <h3>Why a tree, not a pile of prompts</h3>
+  <div class="cols">
+    <div class="card"><h4>Each tier pays for the next</h4><p>Lean context makes every later skill cheaper to run. Fast loops make agent work worth delegating. You feel the savings in order.</p></div>
+    <div class="card"><h4>Grounded, not guessed</h4><p>Every mechanism is checked against Claude Code's own docs: Read deny rules instead of a <code>.claudeignore</code> that does nothing, path-scoped rules instead of imports that don't save anything.</p></div>
+    <div class="card"><h4>Proposes, then asks</h4><p>Skills that change settings, CLAUDE.md or hooks show you the diff and the expected saving first. Nothing is applied without a yes.</p></div>
+    <div class="card"><h4>Ten, not two thousand</h4><p>Every installed skill puts its description into context. A small, sharp set triggers better than a mega-bundle.</p></div>
+  </div>
+</section>
+
+<section id="unlock">
+  <h3>Unlock</h3>
+  <div class="price">
+    <div class="plan"><h4>Tier I · Lean Context</h4><div class="amt">Free <small>MIT</small></div><ul><li>context-audit</li><li>claude-md-slim</li><li>session-handoff</li></ul><a class="btn free" href="https://github.com/geraltbhai/claude-code-skill-tree">Install from GitHub</a></div>
+    <div class="plan hot"><h4>Full tree</h4><div class="amt">Soon <small>launching this week</small></div><ul><li>All 10 skills, Tiers I to III + capstone</li><li>Updates as Claude Code changes</li><li>Install with one copy command</li></ul><a class="btn" id="notify" href="https://github.com/geraltbhai/claude-code-skill-tree/issues/new?title=Notify%20me%20when%20the%20full%20tree%20launches&body=Ping%20me%20here%20when%20it%27s%20out.">Notify me at launch</a></div>
+  </div>
+  <p class="fine">Skills are plain SKILL.md folders. They work in Claude Code (terminal, IDE extensions, desktop app) and anywhere else that reads <code>~/.claude/skills</code>. No accounts, no telemetry.</p>
+</section>
+
+<footer><span>Claude Code Skill Tree · by <a href="https://eigensys-website.vercel.app/">EigenSys</a>, makers of <a href="https://geraltbhai.github.io/ctxray/">ctxray</a></span><span>Not affiliated with Anthropic</span></footer>
+</div>
+
+<script>
+'use strict';
+const REPO = 'https://github.com/geraltbhai/claude-code-skill-tree';
+const SKILLS = [
+  { id: 'context-audit', tier: 1, col: 0, free: true, glyph: 'CA', name: 'context-audit',
+    blurb: 'Find what fills your context and the repo files an agent should never read.',
+    does: ['Reads your /context and /usage output', 'Scans the repo with ctxray for lockfiles, snapshots, generated code', 'Proposes Read deny rules with the tokens each one saves', 'Flags an oversized CLAUDE.md and MCP servers you are not using'] },
+  { id: 'claude-md-slim', tier: 1, col: 1, free: true, glyph: 'MD', name: 'claude-md-slim',
+    blurb: 'Get CLAUDE.md under 200 lines by moving text to homes that actually load on demand.',
+    does: ['Classifies every section: every-session, one workflow, one area, reference, stale', 'Moves workflows to skills and area rules to path-scoped rules', 'Knows @imports load with CLAUDE.md, so they save nothing', 'Shows the diff and line counts before writing'] },
+  { id: 'session-handoff', tier: 1, col: 2, free: true, glyph: 'SH', name: 'session-handoff',
+    blurb: 'Write a 40-line HANDOFF.md, then /clear instead of re-sending a stale session.',
+    does: ['Decides between /clear, /compact and keep going', 'Writes goal, done, next, decisions and gotchas', 'Gives you the exact commands to resume next time', 'Avoids the full-price cache miss after a long break'] },
+  { id: 'test-output-filter', tier: 2, col: 0, free: false, glyph: 'TF', name: 'test-output-filter',
+    blurb: 'A PreToolUse hook that hands Claude only the failing tests.',
+    does: ['Installs a hook for your test runners (npm, pnpm, pytest, go, cargo, jest)', 'Turns tens of thousands of tokens of test output into hundreds', 'Verifies the hook with /hooks and a dry run', 'Easy to turn off per project'], needs: ['context-audit'] },
+  { id: 'model-router', tier: 2, col: 1, free: false, glyph: 'MR', name: 'model-router',
+    blurb: 'Subagents on the right model: Haiku for search and summaries, Sonnet for code, Opus for plans.',
+    does: ['Writes .claude/agents with a model per job', 'Knows Haiku 5.5 costs 5x more above 100k input tokens', 'Keeps verbose work out of the main conversation', 'Explains the price math per agent'], needs: ['claude-md-slim'] },
+  { id: 'plan-gate', tier: 2, col: 2, free: false, glyph: 'PG', name: 'plan-gate',
+    blurb: 'Acceptance criteria and a plan before any code, to stop expensive wrong turns.',
+    does: ['Turns a request into testable acceptance criteria', 'Plans in plan mode and asks for approval', 'Defines how the work will be verified', 'Hands off cleanly to independent-verifier'], needs: ['session-handoff'] },
+  { id: 'agent-team-lead', tier: 3, col: 0, free: false, glyph: 'TL', name: 'agent-team-lead',
+    blurb: 'Single agent, subagents or a team? Decides, briefs, budgets and verifies.',
+    does: ['Picks the topology from the shape of the work', 'Sets an effort budget before fanning out', 'Writes worker briefs with file ownership', 'Ends with independent verification'], needs: ['model-router'] },
+  { id: 'independent-verifier', tier: 3, col: 1, free: false, glyph: 'IV', name: 'independent-verifier',
+    blurb: 'A fresh-context subagent that checks the work against the acceptance criteria.',
+    does: ['Never sees how the work was produced, so it does not grade itself', 'Runs the checks plan-gate defined', 'Reports pass, fail and unverified separately', 'Cheap model where the checks allow it'], needs: ['plan-gate', 'test-output-filter'] },
+  { id: 'skill-scout', tier: 3, col: 2, free: false, glyph: 'SS', name: 'skill-scout',
+    blurb: 'Finds, vets and installs the right skill from public catalogs. Search wide, install narrow.',
+    does: ['Checks installed skills first', 'Shortlists at most three and reads each in full', 'Vets provenance, scripts and overlap', 'Installs only what the task needs'], needs: ['model-router'] },
+  { id: 'usage-review', tier: 4, col: 1, free: false, cap: true, glyph: 'UR', name: 'usage-review',
+    blurb: 'A weekly pass over /usage and /insights: apply what helps, log the trend.',
+    does: ['Reads the /usage breakdown and recommendations', 'Applies the safe ones with your approval', 'Keeps a short log so you can see the trend week to week', 'Points at the next skill in the tree that would help most'], needs: ['agent-team-lead', 'independent-verifier', 'skill-scout'] }
+];
+const TIERS = { 1: ['Tier I · Lean Context', 'var(--free)'], 2: ['Tier II · Fast Loops', 'var(--pro)'], 3: ['Tier III · Agent Leverage', 'var(--pro)'], 4: ['Capstone', 'var(--cap)'] };
+const NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('tree');
+const pos = s => [130 + s.col * 230, { 1: 650, 2: 455, 3: 260, 4: 80 }[s.tier]];
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+const defs = el('defs', {});
+const lg = el('linearGradient', { id: 'litgrad', gradientUnits: 'userSpaceOnUse', x1: '0', y1: '610', x2: '0', y2: '500' }, defs);
+el('stop', { offset: '0', 'stop-color': '#7ee0a1' }, lg); el('stop', { offset: '1', 'stop-color': '#f2b84b' }, lg);
+for (const [t, y] of [[1, 586], [2, 391], [3, 196], [4, 22]]) { const tx = el('text', { x: 14, y, 'text-anchor': 'start', class: 'tierlabel', fill: TIERS[t][1] }); tx.textContent = TIERS[t][0]; }
+const byId = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+for (const s of SKILLS) for (const n of s.needs || []) {
+  const [x1, y1] = pos(byId[n]), [x2, y2] = pos(s);
+  el('path', { d: `M${x1} ${y1 - 46} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2 + 46}`, class: 'edge' + (byId[n].free ? ' lit' : '') });
+}
+const hexPts = (cx, cy, r) => Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 3 * i - Math.PI / 2; return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`; }).join(' ');
+let selected = null;
+for (const s of SKILLS) {
+  const [x, y] = pos(s), color = s.free ? '#7ee0a1' : s.cap ? '#c38bff' : '#f2b84b';
+  const g = el('g', { class: 'node', tabindex: '0', role: 'button', 'aria-label': `${s.name}, ${s.free ? 'free' : 'locked'}`, style: `color:${color}` });
+  el('polygon', { points: hexPts(x, y, 46), class: 'hex', fill: s.free ? 'rgba(126,224,161,.12)' : 'rgba(255,255,255,.03)', stroke: color, 'stroke-width': s.free ? 3 : 2, 'stroke-dasharray': s.free ? '' : '6 5' }, g);
+  const t = el('text', { x, y: y + 7, 'text-anchor': 'middle', fill: color, 'font-family': 'ui-monospace,Menlo,monospace', 'font-weight': '700', 'font-size': '20' }, g); t.textContent = s.glyph;
+  const n = el('text', { x, y: y + 70, 'text-anchor': 'middle', fill: '#e7eaf2', 'font-family': 'Inter,Arial,sans-serif', 'font-weight': '600', 'font-size': '14' }, g); n.textContent = s.name;
+  if (!s.free) { const l = el('text', { x: x + 32, y: y - 30, 'text-anchor': 'middle', fill: color, 'font-size': '14' }, g); l.textContent = '\u{1F512}'; }
+  g.addEventListener('click', () => select(s, g));
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(s, g); } });
+  s._g = g;
+}
+function esc(t) { return t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+function select(s, g) {
+  if (selected) selected.classList.remove('sel'); selected = g; g.classList.add('sel');
+  const badge = s.free ? '<span class="badge free">Free · unlocked</span>' : s.cap ? '<span class="badge cap">Capstone · full tree</span>' : '<span class="badge pro">Full tree</span>';
+  const install = s.free
+    ? `<pre>git clone --depth 1 ${REPO}\ncp -r claude-code-skill-tree/skills/${s.id} ~/.claude/skills/</pre><p class="req">Then ask Claude Code something like "run a context audit". It loads the skill when the task matches.</p>`
+    : `<p class="req">Part of the full tree, launching this week.</p><a class="btn" href="#unlock">Unlock the full tree</a>`;
+  const needs = s.needs ? `<p class="req">Builds on: ${s.needs.map(esc).join(', ')}</p>` : '';
+  document.getElementById('panel').innerHTML = `${badge}<h2>${esc(s.name)}</h2><div class="tier">${esc(TIERS[s.tier][0])}</div><p>${esc(s.blurb)}</p><ul>${s.does.map(d => `<li>${esc(d)}</li>`).join('')}</ul>${needs}${install}`;
+}
+select(SKILLS[0], SKILLS[0]._g);
+</script>
+</body>
+</html>
