@@ -31,6 +31,7 @@ h1 span{background:linear-gradient(90deg,var(--free),var(--pro) 60%,var(--cap));
 .ctas{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-block;text-decoration:none;font:700 15px var(--sans);padding:12px 20px;border-radius:10px;border:1px solid var(--line);color:var(--ink);background:var(--panel)}
 .btn.free{background:var(--free);border-color:var(--free);color:#08130c}
+.btn.pro{background:var(--pro);border-color:var(--pro);color:#0b0d12}
 .btn:hover{filter:brightness(1.08)}
 .stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;margin:38px 0 10px;align-items:start}
 @media (max-width:900px){.stage{grid-template-columns:1fr}}
@@ -61,7 +62,7 @@ h3{font:800 26px/1.2 var(--sans);letter-spacing:-.015em;margin:0 0 10px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
 .card h4{margin:0 0 6px;font:700 16px var(--sans)}
 .card p{margin:0;color:var(--dim);font-size:14.5px}
-.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-width:760px}
+.price{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;max-width:980px}
 .plan{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
 .plan.hot{border-color:var(--pro)}
 .plan h4{margin:0;font:600 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
@@ -110,7 +111,8 @@ footer a{color:var(--dim)}
   <h3>Unlock</h3>
   <div class="price">
     <div class="plan"><h4>Tier I · Lean Context</h4><div class="amt">Free <small>MIT</small></div><ul><li>context-audit</li><li>claude-md-slim</li><li>session-handoff</li></ul><a class="btn free" href="https://github.com/geraltbhai/claude-code-skill-tree">Install from GitHub</a></div>
-    <div class="plan hot"><h4>Full tree</h4><div class="amt">Soon <small>launching this week</small></div><ul><li>All 10 skills, Tiers I to III + capstone</li><li>Updates as Claude Code changes</li><li>Install with one copy command</li></ul><a class="btn" id="notify" href="https://github.com/geraltbhai/claude-code-skill-tree/issues/new?title=Notify%20me%20when%20the%20full%20tree%20launches&body=Ping%20me%20here%20when%20it%27s%20out.">Notify me at launch</a></div>
+    <div class="plan hot"><h4>Full tree</h4><div class="amt">$29 <small>launch price</small></div><ul><li>All 10 skills, Tiers I to III + capstone</li><li>Hook scripts and agent files included</li><li>Install with one copy command</li><li>License for you and your team</li></ul><a class="btn pro" href="https://samyakvaghela.gumroad.com/l/claude-code-skill-tree">Get the full tree</a></div>
+    <div class="plan"><h4>Playbook kit</h4><div class="amt">$9 <small>start here</small></div><ul><li>7 copy-paste prompts, in order</li><li>Test-log hook, 4 agents, 3 templates</li><li>The 3 free skills + hi-res PDF</li></ul><a class="btn" href="https://samyakvaghela.gumroad.com/l/claude-code-playbook">Get the kit</a></div>
   </div>
   <p class="fine">Skills are plain SKILL.md folders. They work in Claude Code (terminal, IDE extensions, desktop app) and anywhere else that reads <code>~/.claude/skills</code>. No accounts, no telemetry.</p>
 </section>
@@ -185,7 +187,7 @@ function select(s, g) {
   const badge = s.free ? '<span class="badge free">Free · unlocked</span>' : s.cap ? '<span class="badge cap">Capstone · full tree</span>' : '<span class="badge pro">Full tree</span>';
   const install = s.free
     ? `<pre>git clone --depth 1 ${REPO}\ncp -r claude-code-skill-tree/skills/${s.id} ~/.claude/skills/</pre><p class="req">Then ask Claude Code something like "run a context audit". It loads the skill when the task matches.</p>`
-    : `<p class="req">Part of the full tree, launching this week.</p><a class="btn" href="#unlock">Unlock the full tree</a>`;
+    : `<p class="req">Part of the full tree.</p><a class="btn pro" href="https://samyakvaghela.gumroad.com/l/claude-code-skill-tree">Get the full tree · $29</a>`;
   const needs = s.needs ? `<p class="req">Builds on: ${s.needs.map(esc).join(', ')}</p>` : '';
   document.getElementById('panel').innerHTML = `${badge}<h2>${esc(s.name)}</h2><div class="tier">${esc(TIERS[s.tier][0])}</div><p>${esc(s.blurb)}</p><ul>${s.does.map(d => `<li>${esc(d)}</li>`).join('')}</ul>${needs}${install}`;
 }
