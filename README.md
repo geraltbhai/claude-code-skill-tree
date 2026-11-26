@@ -38,7 +38,7 @@ Mechanisms were checked against the Claude Code docs on 17 Nov 2026: [costs](htt
 
 ## Full tree
 
-Tiers II, III and the capstone are in the full tree: [get it on Gumroad](https://samyakvaghela.gumroad.com/l/claude-code-skill-tree) ($29 launch price). New to all this? Start with the [$9 Claude Code Playbook kit](https://samyakvaghela.gumroad.com/l/claude-code-playbook): 7 prompts plus the hook, agents and templates they use.
+Tiers II, III and the capstone are in the full tree: [get it on Gumroad](https://samyakvaghela.gumroad.com/l/claude-code-skill-tree/LAUNCH30) ($29, **30% off with code LAUNCH30 until Dec 3**). Prefer a download? Tier I is also on [Gumroad, pay what you want](https://samyakvaghela.gumroad.com/l/claude-code-skill-tree-free). New to all this? Start with the [$9 Claude Code Playbook kit](https://samyakvaghela.gumroad.com/l/claude-code-playbook): 7 prompts plus the hook, agents and templates they use.
 
 ---
 
